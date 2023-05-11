@@ -68,8 +68,9 @@ app.get("/", function(req, res){
 });
 
 app.post("/", function(req, res){
-    item = req.body.newItem;
-    console.log(item);
+    var item = req.body.newItem;
+    // console.log(item);
+    items.push(item)
     res.redirect("/");
 });
 app.listen(3000, function(){
