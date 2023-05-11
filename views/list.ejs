@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do list</title>
+</head>
+<body>
+    <!-- <%= %> is marker for EJS -->
+    <h1>It's a <%=dayType%>!</h1>
+    <% if (dayType === 'Thursday'){ %>
+        <h1 style="color: purple"><%=dayType%> ToDo List</h1>
+    <% } else { %>
+        <h1 style="color: blue"><%=dayType%> ToDo List</h1>
+    <% } %>
+
+    <ul>
+        <li>Buy Food</li>
+        <li>Cook Food</li>
+        <li>Eat Food</li>
+        <li><%=newListItem%></li>
+    </ul>
+
+    <form class="" action="/" method="post">
+        <input type="text" name="newItem">
+        <button type="submit" name="button">Add</button>
+    </form>
+
+</body>
+</html>
