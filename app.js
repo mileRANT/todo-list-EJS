@@ -11,7 +11,7 @@ var today = new Date();
 var day = "";
 var currentDay = today.getDay();
 var items = ["Buy Food", "Cook Food", "Eat Food"];
-
+var workItems = []
 app.get("/", function(req, res){
     // res.send("hello");
 
@@ -70,11 +70,31 @@ app.get("/", function(req, res){
 });
 
 app.post("/", function(req, res){
-    var item = req.body.newItem;
-    // console.log(item);
-    items.push(item)
-    res.redirect("/");
+    let item = req.body.newItem;
+    console.log(req.body.list);
+    if (req.body.list === "Work List"){
+        workItems.push(item);
+        res.redirect("/work");
+    } else{
+        // console.log(item);
+        items.push(item);
+        res.redirect("/");
+    };
+    
+
 });
+
+app.get("/work", function(req, res){
+    res.render("list", {dayType: "Work List", newListItems: workItems});
+})
+
+// app.post does not get called as we are using the same template for the home and work section
+// app.post("/work", function(req, res){
+//     var workItem = req.body.newItem;
+//     // console.log(item);
+//     workItems.push(workItem)
+//     res.redirect("/work");
+// });
 app.listen(3000, function(){
     console.log("Server listening on 3000");
 });
