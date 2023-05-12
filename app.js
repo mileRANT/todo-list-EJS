@@ -2,14 +2,20 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
+const date = require(__dirname + "/date.js"); //require the [local] module
+
+//this is when module.exports = getDate. However it is now module.exports.getDate
+// console.log(date);  //will show that it's storing a function called getDate
+// console.log(date()); //will call/use the function getDate. 
+
 
 app.set('view engine','ejs');   //use EJS: embedded javascript Templating
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-var today = new Date();
-var day = "";
-var currentDay = today.getDay();
+// var today = new Date();
+// var day = "";
+// var currentDay = today.getDay();
 var items = ["Buy Food", "Cook Food", "Eat Food"];
 var workItems = []
 app.get("/", function(req, res){
@@ -28,43 +34,11 @@ app.get("/", function(req, res){
     //     day = today.getDay();
     // };
 
-    switch (currentDay){
-        case 0:
-            day = "Sunday";
-            break;
-        case 1:
-            day = "Monday";
-            break;
-        case 2:
-            day = "Tuesday";
-            break;
-        case 3:
-            day = "Wednesday";
-            break;
-        case 4:
-            day = "Thursday";
-            break;
-        case 5:
-            day = "Friday";
-            break;
-        case 6:
-            day = "Saturday";
-            break;
-        default:
-            day = "Break";
-            break;
-    }
 
-    //instead of using this manual case statement, look up libraries for something easier
-    var options = {
-        weekday: "long",
-        day: "numeric",
-        month: "long"
-    };
-    var jsDay = today.toLocaleDateString("en-US", options);
-    //ejs assumes a views directory exists, and uses .ejs files
-    //accepts a keyvalue pair. dayType is in the list file
-    // res.render("list", {dayType: day});
+// code for date logic has been moved to date.js
+// using node.js, 
+    let jsDay = date.getDate();
+    // let jsDay = date.getDay();       //we have multiple functions stored here
     res.render("list", {dayType: jsDay, newListItems: items});
     
 });
