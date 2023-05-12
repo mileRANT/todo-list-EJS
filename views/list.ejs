@@ -5,30 +5,37 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do list</title>
+<!-- this does not work for express as it only serves up the views folder and the entry point js -->
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <!-- <%= %> is marker for EJS -->
-    <h1>It's a <%=dayType%>!</h1>
+    <div  class="box" id="heading">
+    <h1>It's <%=dayType%>!</h1>
     <% if (dayType === 'Thursday'){ %>
-        <h1 style="color: purple"><%=dayType%> ToDo List</h1>
+        <h1 style="color: purple">ToDo List</h1>
     <% } else { %>
-        <h1 style="color: blue"><%=dayType%> ToDo List</h1>
+        <h1 style="color: blue">ToDo List</h1>
     <% } %>
+    </div>
 
-    <ul>
-        <li>Buy Food</li>
-        <li>Cook Food</li>
-        <li>Eat Food</li>
-        <!-- <li><%=newListItems%></li> -->
+    <div class="box">
+    
         <% for (var i=0; i<newListItems.length; i++) { %>
-            <li><%=newListItems[i]%></li> 
+            <div class="item">
+                <input type="checkbox">
+                <p><%=newListItems[i]%></p>  
+            </div>
         <% } %>
-    </ul>
+    
+        <form class="item" action="/" method="post">
+            <!-- autocomplete removes the word suggestion when clicking in the input box -->
+            <input type="text" name="newItem" placeholder="New Item" autocomplete="off">
+            <button type="submit" name="button">+</button>
+        </form>
+    </div>
 
-    <form class="" action="/" method="post">
-        <input type="text" name="newItem">
-        <button type="submit" name="button">Add</button>
-    </form>
+
 
 </body>
 </html>

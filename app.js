@@ -5,12 +5,13 @@ const app = express();
 
 app.set('view engine','ejs');   //use EJS: embedded javascript Templating
 app.use(bodyParser.urlencoded({extended: true}));
-
+app.use(express.static("public"));
 
 var today = new Date();
 var day = "";
 var currentDay = today.getDay();
-var items = [];
+var items = ["Buy Food", "Cook Food", "Eat Food"];
+
 app.get("/", function(req, res){
     // res.send("hello");
 
@@ -53,6 +54,7 @@ app.get("/", function(req, res){
             day = "Break";
             break;
     }
+
     //instead of using this manual case statement, look up libraries for something easier
     var options = {
         weekday: "long",
