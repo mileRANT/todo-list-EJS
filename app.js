@@ -88,6 +88,11 @@ app.get("/work", function(req, res){
     res.render("list", {dayType: "Work List", newListItems: workItems});
 })
 
+app.get("/about", function(req, res){
+    res.render("about");
+})
+
+
 // app.post does not get called as we are using the same template for the home and work section
 // app.post("/work", function(req, res){
 //     var workItem = req.body.newItem;
