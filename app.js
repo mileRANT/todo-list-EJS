@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const mongoose = require("mongoose");
 const app = express();
 const date = require(__dirname + "/date.js"); //require the [local] module
 
@@ -16,8 +16,33 @@ app.use(express.static("public"));
 // var today = new Date();
 // var day = "";
 // var currentDay = today.getDay();
-var items = ["Buy Food", "Cook Food", "Eat Food"];
-var workItems = []
+// var items = ["Buy Food", "Cook Food", "Eat Food"];
+// var workItems = []
+
+//replacing array system with a persisting database [ie. mongodb]
+mongoose.connect("mongodb://127.0.0.1:27017/todolistDB");
+//make an items schema
+const itemsSchema = {
+    name: String
+};
+
+//make a mongoose model
+const Item = mongoose.model("Item", itemsSchema);
+
+const item1 = new Item({
+    name: "Welcome"
+});
+const item2 = new Item({
+    name: "Hit + to add an item"
+});
+const item3 = new Item({
+    name: "<-- Hit this to delete item>"
+});
+
+const defaultItems = [item1, item2, item3];
+//initial start to the mongodb database.
+// Item.insertMany(defaultItems);       
+
 app.get("/", function(req, res){
     // res.send("hello");
 
