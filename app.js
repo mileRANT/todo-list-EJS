@@ -43,6 +43,12 @@ const defaultItems = [item1, item2, item3];
 //initial start to the mongodb database.
 // Item.insertMany(defaultItems);       
 
+
+async function getItems(){
+    const Items = await Item.find({});
+    return Items;
+}
+
 app.get("/", function(req, res){
     // res.send("hello");
 
@@ -63,8 +69,13 @@ app.get("/", function(req, res){
 // code for date logic has been moved to date.js
 // using node.js, 
     let jsDay = date.getDate();
-    // let jsDay = date.getDay();       //we have multiple functions stored here
-    res.render("list", {dayType: jsDay, newListItems: items});
+
+    getItems().then(function(FoundItems){
+        res.render("list", {dayType: jsDay, newListItems: FoundItems});    
+    });
+
+    // // let jsDay = date.getDay();       //we have multiple functions stored here
+    // res.render("list", {dayType: jsDay, newListItems: items});
     
 });
 
