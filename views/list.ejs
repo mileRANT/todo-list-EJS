@@ -12,12 +12,20 @@
 
     <div class="box">
     
-        <% for (var i=0; i<newListItems.length; i++) { %>
+        <!-- <% for (var i=0; i<newListItems.length; i++) { %>-->
+            <!-- <div class="item">
+                <input type="checkbox">
+                <p><%=newListItems[i].name %></p>  
+            </div> -->
+        <!-- <% } %> -->
+
+        <!-- newer javascript version of iterating through arrays. using the foreach function on an array -->
+        <% newListItems.forEach(function(item){ %>
             <div class="item">
                 <input type="checkbox">
-                <p><%=newListItems[i]%></p>  
+                <p><%=item.name %></p>  
             </div>
-        <% } %>
+        <% }) %>
     
         <form class="item" action="/" method="post">
             <!-- autocomplete removes the word suggestion when clicking in the input box -->

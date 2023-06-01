@@ -36,18 +36,18 @@ const item2 = new Item({
     name: "Hit + to add an item"
 });
 const item3 = new Item({
-    name: "<-- Hit this to delete item>"
+    name: "<-- Hit this to delete item"
 });
 
 const defaultItems = [item1, item2, item3];
 //initial start to the mongodb database.
 // Item.insertMany(defaultItems);       
 
-
 async function getItems(){
     const Items = await Item.find({});
     return Items;
 }
+
 
 app.get("/", function(req, res){
     // res.send("hello");
@@ -71,7 +71,13 @@ app.get("/", function(req, res){
     let jsDay = date.getDate();
 
     getItems().then(function(FoundItems){
-        res.render("list", {dayType: jsDay, newListItems: FoundItems});    
+        if (FoundItems.length === 0){
+            
+            Item.insertMany(defaultItems);       
+            res.redirect("/")
+        } else{
+            res.render("list", {dayType: jsDay, newListItems: FoundItems});    
+        }
     });
 
     // // let jsDay = date.getDay();       //we have multiple functions stored here
