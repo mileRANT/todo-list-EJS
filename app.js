@@ -48,6 +48,11 @@ async function getItems(){
     return Items;
 }
 
+async function removeItems(mongo_id){
+    const Items = await Item.findByIdAndRemove(mongo_id)
+    return Items;
+}
+
 
 app.get("/", function(req, res){
     // res.send("hello");
@@ -86,27 +91,45 @@ app.get("/", function(req, res){
 });
 
 app.post("/", function(req, res){
-    let item = req.body.newItem;
-    console.log(req.body.list);
-    if (req.body.list === "Work List"){
-        workItems.push(item);
-        res.redirect("/work");
-    } else{
-        // console.log(item);
-        items.push(item);
-        res.redirect("/");
-    };
-    
+    // let item = req.body.newItem;
+    //below is the old way using an array. Upgrading to mongoDB
+    // console.log(req.body.list);
+    // if (req.body.list === "Work List"){
+    //     workItems.push(item);
+    //     res.redirect("/work");
+    // } else{
+    //     // console.log(item);
+    //     items.push(item);
+    //     res.redirect("/");
+    // };
+    const itemName = req.body.newItem;
+    const item = new Item({
+        name: itemName
+    })
+    item.save();    // mongoose item
+    res.redirect("/");
+});
 
+app.post("/delete", function(req,res){
+    //using "onChange" attribute with inline javascript, can get the value of the name item checkbox
+    // console.log(req.body);
+    console.log("Test");
+    const checkedItemId = req.body.checkbox;
+    console.log(checkedItemId);
+    // Item.findByIdAndDelete(checkedItemId);
+    removeItems(checkedItemId).then(function(){
+        res.redirect("/");
+    });
+    // res.redirect("/");
 });
 
 app.get("/work", function(req, res){
     res.render("list", {dayType: "Work List", newListItems: workItems});
-})
+});
 
 app.get("/about", function(req, res){
     res.render("about");
-})
+});
 
 
 // app.post does not get called as we are using the same template for the home and work section

@@ -21,10 +21,13 @@
 
         <!-- newer javascript version of iterating through arrays. using the foreach function on an array -->
         <% newListItems.forEach(function(item){ %>
-            <div class="item">
-                <input type="checkbox">
-                <p><%=item.name %></p>  
-            </div>
+            <form action="/delete" method="post">
+                <div class="item">
+                    <!-- use EJS for the value item being passed to the checkbox. use the mongoDB ID -->
+                    <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="this.form.submit()">
+                    <p><%=item.name %></p>  
+                </div>
+            </form>
         <% }) %>
     
         <form class="item" action="/" method="post">
