@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
 const app = express();
 const date = require(__dirname + "/date.js"); //require the [local] module
-
+const _ = require("lodash");
 //this is when module.exports = getDate. However it is now module.exports.getDate
 // console.log(date);  //will show that it's storing a function called getDate
 // console.log(date()); //will call/use the function getDate. 
@@ -42,6 +42,11 @@ const item3 = new Item({
 const defaultItems = [item1, item2, item3];
 //initial start to the mongodb database.
 // Item.insertMany(defaultItems);       
+const listSchema = {
+    name: String,
+    items: [itemsSchema]
+};
+const List = mongoose.model("List", listSchema);
 
 async function getItems(){
     const Items = await Item.find({});
@@ -51,6 +56,19 @@ async function getItems(){
 async function removeItems(mongo_id){
     const Items = await Item.findByIdAndRemove(mongo_id)
     return Items;
+}
+
+async function findExists(listName){
+    const Lists = await List.findOne({name: listName});
+    // console.log("test getexists");
+    // console.log(Lists);
+    
+    return Lists;
+}
+
+async function findExistsAndUpdate(mongo_id, listName){
+    const Lists = await List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: mongo_id}}})
+    return Lists;
 }
 
 
@@ -81,7 +99,7 @@ app.get("/", function(req, res){
             Item.insertMany(defaultItems);       
             res.redirect("/")
         } else{
-            res.render("list", {dayType: jsDay, newListItems: FoundItems});    
+            res.render("list", {dayType: jsDay, listTitle: "Today", newListItems: FoundItems});    
         }
     });
 
@@ -103,29 +121,95 @@ app.post("/", function(req, res){
     //     res.redirect("/");
     // };
     const itemName = req.body.newItem;
+    const listName = req.body.list;
+    console.log(listName);
     const item = new Item({
         name: itemName
     })
-    item.save();    // mongoose item
-    res.redirect("/");
+
+    if (listName ==="Today"){
+        item.save();    // mongoose item
+        res.redirect("/");
+    } else{
+        findExists(listName).then(function(foundList){
+            foundList.items.push(item);
+            foundList.save();
+            res.redirect("/" + listName)
+        });
+    }
+
 });
 
 app.post("/delete", function(req,res){
     //using "onChange" attribute with inline javascript, can get the value of the name item checkbox
     // console.log(req.body);
-    console.log("Test");
+    // console.log("Test");
     const checkedItemId = req.body.checkbox;
-    console.log(checkedItemId);
+    const listName = req.body.listName; //this is the hidden input value at the end of the checkbox form
+
+    //need to know if Item list [default] as well as List list [custom]
+    // console.log(checkedItemId);
     // Item.findByIdAndDelete(checkedItemId);
-    removeItems(checkedItemId).then(function(){
-        res.redirect("/");
-    });
+    if (listName == "Today"){
+        //usual statement
+        removeItems(checkedItemId).then(function(){
+            res.redirect("/");
+        });
+    } else {
+        //need to find the custom list with the correct id. the list document is actually an array of custom lists
+        //mongoose remove document from array
+        //can use pull/pullall. using a $ sign signifies using mongoDB.
+        //condition, update, callback
+        // List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function(err, foundList){
+        //     if (!err){
+        //         res.redirect("/" + listName);
+        //     }
+        // });
+        findExistsAndUpdate(checkedItemId, listName).then(function(){
+            res.redirect("/" + listName);
+        });
+        
+    }
+
     // res.redirect("/");
 });
 
-app.get("/work", function(req, res){
-    res.render("list", {dayType: "Work List", newListItems: workItems});
+
+// app.get("/work", function(req, res){
+//     res.render("list", {dayType: "Work List", newListItems: workItems});
+// });
+//updating to a dynamic route
+//adjusting this dynamic route to have titlecase. Home and home should be the same route
+//lodash has been installed for this purpose
+app.get("/:customListName",function(req,res){
+    // console.log(req.params.customListName)
+    // console.log(req.params.customListName)
+    const customListName = _.capitalize(req.params.customListName);
+    //check if the list exists
+    findExists(customListName).then(function(foundList){
+        // console.log("If errors");
+        // if (!err){
+        //     console.log("no errors");
+            if (!foundList){
+                //List is a mongoose model created above
+                const list = new List({
+                    name: customListName,
+                    items: defaultItems
+                });
+                list.save();
+                // console.log("Saved list");
+                res.redirect("/" + customListName);
+            } else{
+                // console.log("Exists");
+                // console.log(foundList);
+                let jsDay = date.getDate();
+                res.render("list", {dayType: jsDay, listTitle: foundList.name, newListItems: foundList.items})
+                
+            }
+        // }
+    });
 });
+
 
 app.get("/about", function(req, res){
     res.render("about");

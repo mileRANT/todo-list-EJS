@@ -4,9 +4,9 @@
     <div  class="box" id="heading">
     <h1>It's <%=dayType%>!</h1>
     <% if (dayType === 'Thursday'){ %>
-        <h1 style="color: purple">ToDo List</h1>
+        <h1 style="color: purple"><%=listTitle%></h1>
     <% } else { %>
-        <h1 style="color: blue">ToDo List</h1>
+        <h1 style="color: blue"><%=listTitle%></h1>
     <% } %>
     </div>
 
@@ -27,13 +27,15 @@
                     <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="this.form.submit()">
                     <p><%=item.name %></p>  
                 </div>
+                <!-- hidden input to pass the listTitle -->
+                <input type="hidden" name="listName" value="<%=listTitle%>"></input>
             </form>
         <% }) %>
     
         <form class="item" action="/" method="post">
             <!-- autocomplete removes the word suggestion when clicking in the input box -->
             <input type="text" name="newItem" placeholder="New Item" autocomplete="off">
-            <button type="submit" name="list" value=<%=dayType%>>+</button>
+            <button type="submit" name="list" value="<%=listTitle%>">+</button>
         </form>
     </div>
 
